@@ -7,7 +7,7 @@ import { authenticate, DEMO_USERS } from '../auth';
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('student@scholarsecure.demo');
-  const [password, setPassword] = useState('StudentDemo2026');
+  const [password, setPassword] = useState('Student123!');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
