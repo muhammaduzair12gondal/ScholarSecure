@@ -2,10 +2,16 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import OfficerDashboard from './pages/OfficerDashboard';
+import { getCurrentUser } from './auth';
 
-function ProtectedRoute({ children }) {
-  const loggedIn = localStorage.getItem('scholarsecure_session') === 'student-demo';
-  return loggedIn ? children : <Navigate to="/login" replace />;
+function ProtectedRoute({ role, children }) {
+  const user = getCurrentUser();
+  if (!user) return <Navigate to="/login" replace />;
+  if (role && user.role !== role) {
+    return <Navigate to={user.role === 'officer' ? '/officer' : '/dashboard'} replace />;
+  }
+  return children;
 }
 
 export default function App() {
@@ -16,8 +22,16 @@ export default function App() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="student">
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/officer"
+        element={
+          <ProtectedRoute role="officer">
+            <OfficerDashboard />
           </ProtectedRoute>
         }
       />
