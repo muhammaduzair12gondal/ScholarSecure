@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import StudentDashboard from './pages/StudentDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import { getCurrentUser } from './auth';
 
@@ -23,7 +23,7 @@ export default function App() {
         path="/dashboard"
         element={
           <ProtectedRoute role="student">
-            <Dashboard />
+            <StudentDashboard />
           </ProtectedRoute>
         }
       />
