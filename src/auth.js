@@ -1,6 +1,6 @@
 export const DEMO_USERS = [
-  { id: 'student-1', name: 'Muhammad Uzair', role: 'student', roleLabel: 'Student', email: 'student@scholarsecure.demo', accessCode: 'StudentDemo2026' },
-  { id: 'officer-1', name: 'Sara Ahmed', role: 'officer', roleLabel: 'Scholarship Officer', email: 'officer@scholarsecure.demo', accessCode: 'OfficerDemo2026' }
+  { id: 'student-1', name: 'Muhammad Uzair', role: 'student', roleLabel: 'Student', email: 'student@scholarsecure.demo', accessCode: 'Student123!' },
+  { id: 'officer-1', name: 'Sara Ahmed', role: 'officer', roleLabel: 'Scholarship Officer', email: 'officer@scholarsecure.demo', accessCode: 'Officer123!' }
 ];
 
 const SESSION_KEY = 'scholarsecure_current_user';
@@ -41,12 +41,17 @@ export function clearSession() {
 export function getApplications() {
   try {
     const saved = localStorage.getItem(APPLICATIONS_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch {
-    localStorage.removeItem(APPLICATIONS_KEY);
+    // Reset malformed demo data below.
   }
-  localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(seedApplications));
-  return seedApplications;
+
+  const fresh = seedApplications.map((item) => ({ ...item }));
+  localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(fresh));
+  return fresh;
 }
 
 export function updateApplicationStatus(applicationId, nextStatus) {
