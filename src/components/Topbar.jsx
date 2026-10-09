@@ -1,5 +1,5 @@
 import { LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Brand from './Brand';
 import { clearSession, getCurrentUser } from '../auth';
 
@@ -13,10 +13,26 @@ export default function Topbar() {
   }
 
   const initials = user?.name?.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'SS';
+  const links = user?.role === 'student'
+    ? [
+        { to: '/dashboard', label: 'Dashboard' },
+        { to: '/apply', label: 'Apply' },
+        { to: '/applications', label: 'Track' }
+      ]
+    : [{ to: '/officer', label: 'Review queue' }];
 
   return (
     <header className="dashboard-topbar">
-      <Brand compact />
+      <div className="topbar-left">
+        <Brand compact />
+        <nav className="dashboard-nav" aria-label="Dashboard navigation">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => isActive ? 'dashboard-nav-link active' : 'dashboard-nav-link'}>
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
       <div className="topbar-actions">
         <div className="user-chip">
           <span className="avatar">{initials}</span>
