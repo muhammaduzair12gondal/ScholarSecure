@@ -1,0 +1,25 @@
+Development Activity 1 — Submission Details
+
+Project Name: ScholarSecure — Secure Scholarship Application, Tracking & Document Verification System
+
+Group Members:
+1. Muhammad Uzair — 23F-3032
+2. Ikram Ali — 23F-3064
+
+Primary User Role: Student
+
+Developed Pages:
+1. Home / Landing Page
+2. Login / Student Entry Page
+3. Scholarship Dashboard / Core Functional Page
+
+JavaScript Interactions:
+1. Login form validation + show/hide password
+2. Scholarship search + category filtering
+3. Scholarship details modal + dynamic application-start action
+
+Testing:
+Problem discovered: Directly opening a nested route such as /dashboard on a static deployment can return a 404.
+Improvement made: Added a Vercel rewrite rule that routes all requests through index.html so React Router can handle client-side routes.
+
+Public URL: ______________________________
