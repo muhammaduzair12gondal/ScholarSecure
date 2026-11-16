@@ -1,28 +1,38 @@
 import { ChevronDown, ChevronUp, FileSearch, Search, ShieldCheck } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Topbar from '../components/Topbar';
-import { getApplications, getCurrentUser, maskCnic, maskPhone } from '../auth';
+import { fetchApplications, maskCnic, maskPhone } from '../api';
 
 export default function TrackApplications() {
-  const user = getCurrentUser();
+  const [applications, setApplications] = useState([]);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('All');
   const [expandedId, setExpandedId] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const ownApplications = useMemo(
-    () => getApplications().filter((item) => item.studentName === user?.name),
-    [user?.name]
-  );
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await fetchApplications();
+        setApplications(data);
+      } catch (err) {
+        setError(err.message || 'Failed to load applications.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return ownApplications.filter((item) => {
-      const matchesQuery = !normalized || `${item.id} ${item.scholarship} ${item.status}`.toLowerCase().includes(normalized);
+    return applications.filter((item) => {
+      const matchesQuery = !normalized || `${item.appId} ${item.scholarship} ${item.status}`.toLowerCase().includes(normalized);
       const matchesStatus = status === 'All' || item.status === status;
       return matchesQuery && matchesStatus;
     });
-  }, [ownApplications, query, status]);
+  }, [applications, query, status]);
 
   function handleQuery(event) {
     const value = event.target.value;
@@ -34,7 +44,7 @@ export default function TrackApplications() {
     setQuery(value);
   }
 
-  const statuses = ['All', ...new Set(ownApplications.map((item) => item.status))];
+  const statuses = ['All', ...new Set(applications.map((item) => item.status))];
 
   return (
     <div className="dashboard-shell">
@@ -42,7 +52,7 @@ export default function TrackApplications() {
       <main className="dashboard-main container-wide module-page">
         <section className="dashboard-intro">
           <div>
-            <span className="eyebrow">Activity 3 · Member 2 module</span>
+            <span className="eyebrow">Track applications</span>
             <h1>Search and track applications</h1>
             <p>Find your applications by reference, scholarship or status and open a record for more details.</p>
           </div>
@@ -57,20 +67,21 @@ export default function TrackApplications() {
             </select>
           </div>
           {error && <div className="module-feedback error" role="alert">{error}</div>}
+          {loading && <div className="notice-box">Loading applications from server…</div>}
 
           <div className="result-count"><strong>{filtered.length}</strong> matching application{filtered.length === 1 ? '' : 's'}</div>
           <div className="tracking-list">
             {filtered.map((item) => {
-              const expanded = expandedId === item.id;
+              const expanded = expandedId === item.appId;
               return (
-                <article className="tracking-item" key={item.id}>
+                <article className="tracking-item" key={item.appId}>
                   <div className="tracking-item-main">
                     <div className="module-icon"><FileSearch size={20} /></div>
                     <div className="tracking-copy">
-                      <div className="tracking-title-row"><div><span>{item.id}</span><h3>{item.scholarship}</h3></div><span className="status-pill">{item.status}</span></div>
-                      <p>Submitted {item.submitted} · {item.documentStatus}</p>
+                      <div className="tracking-title-row"><div><span>{item.appId}</span><h3>{item.scholarship}</h3></div><span className="status-pill">{item.status}</span></div>
+                      <p>{item.documentStatus} · Created {new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                     </div>
-                    <button className="details-button" onClick={() => setExpandedId(expanded ? null : item.id)} aria-expanded={expanded}>
+                    <button className="details-button" onClick={() => setExpandedId(expanded ? null : item.appId)} aria-expanded={expanded}>
                       {expanded ? 'Hide details' : 'View details'} {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </button>
                   </div>
@@ -86,7 +97,7 @@ export default function TrackApplications() {
                 </article>
               );
             })}
-            {filtered.length === 0 && <div className="empty-state"><FileSearch size={24} /><strong>No application found</strong><span>Try another reference, scholarship name or status filter.</span></div>}
+            {!loading && filtered.length === 0 && <div className="empty-state"><FileSearch size={24} /><strong>No application found</strong><span>Try another reference, scholarship name or status filter.</span></div>}
           </div>
         </section>
       </main>

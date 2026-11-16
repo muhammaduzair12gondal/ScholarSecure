@@ -5,11 +5,11 @@ import StudentDashboard from './pages/StudentDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import SubmitApplication from './pages/SubmitApplication';
 import TrackApplications from './pages/TrackApplications';
-import { getCurrentUser } from './auth';
+import { getStoredUser } from './api';
 import './activity3.css';
 
 function ProtectedRoute({ role, children }) {
-  const user = getCurrentUser();
+  const user = getStoredUser();
   if (!user) return <Navigate to="/login" replace />;
   if (role && user.role !== role) {
     return <Navigate to={user.role === 'officer' ? '/officer' : '/dashboard'} replace />;

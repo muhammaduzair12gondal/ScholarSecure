@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "cd server && node index.js",
+    "server:seed": "cd server && node seed.js",
+    "test:backend": "bash server/test_api.sh"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

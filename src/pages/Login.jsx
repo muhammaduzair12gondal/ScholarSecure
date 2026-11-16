@@ -2,28 +2,35 @@ import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from 'lucide-r
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Brand from '../components/Brand';
-import { authenticate, DEMO_USERS } from '../auth';
+import { loginAPI } from '../api';
+
+const DEMO_USERS = [
+  { roleLabel: 'Student', email: 'student@scholarsecure.demo', accessCode: 'Student123!' },
+  { roleLabel: 'Scholarship Officer', email: 'officer@scholarsecure.demo', accessCode: 'Officer123!' },
+];
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('student@scholarsecure.demo');
   const [password, setPassword] = useState('Student123!');
-  // Activity 5: keep the helper result in UI state so feedback updates as the password changes.
   const [passwordStrength, setPasswordStrength] = useState(() => window.checkPasswordStrength?.('Student123!') || null);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError('');
+    setLoading(true);
 
-    const user = authenticate(email, password);
-    if (!user) {
-      setError('Invalid demo credentials. Use one of the accounts shown below.');
-      return;
+    try {
+      const user = await loginAPI(email, password);
+      navigate(user.role === 'officer' ? '/officer' : '/dashboard', { replace: true });
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
-
-    navigate(user.role === 'officer' ? '/officer' : '/dashboard', { replace: true });
   }
 
   function useDemo(user) {
@@ -36,7 +43,6 @@ export default function Login() {
   function handlePasswordChange(event) {
     const value = event.target.value;
     setPassword(value);
-    // The supplied helper evaluates the current value; this does not store the password.
     setPasswordStrength(window.checkPasswordStrength?.(value) || null);
   }
 
@@ -52,8 +58,8 @@ export default function Login() {
           <div className="privacy-note">
             <ShieldCheck size={20} />
             <div>
-              <strong>Activity 2 security demo</strong>
-              <span>The signed-in role controls the dashboard, actions and private data shown.</span>
+              <strong>Secure backend authentication</strong>
+              <span>Passwords are hashed with bcrypt. Sessions use signed JWTs verified on every request.</span>
             </div>
           </div>
         </div>
@@ -62,9 +68,9 @@ export default function Login() {
       <main className="login-main">
         <div className="login-card">
           <div className="login-heading">
-            <span className="eyebrow">Demo access</span>
+            <span className="eyebrow">Secure access</span>
             <h2>Sign in to ScholarSecure</h2>
-            <p>Use either demo account. The role is identified from the account, not selected manually.</p>
+            <p>Your credentials are verified against the backend. Passwords are never stored in plaintext.</p>
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
@@ -78,12 +84,11 @@ export default function Login() {
             <div className="input-wrap">
               <LockKeyhole size={18} />
               <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={handlePasswordChange} autoComplete="current-password" />
-              <button type="button" className="password-toggle" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+              <button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {passwordStrength && (
-              // Activity 5: display the helper's level and message below the password field.
               <div className={`password-strength strength-${passwordStrength.level.toLowerCase()}`} aria-live="polite">
                 <strong>Password strength: {passwordStrength.level}</strong>
                 <span>{passwordStrength.message}</span>
@@ -91,13 +96,15 @@ export default function Login() {
             )}
 
             {error && <div className="form-error" role="alert">{error}</div>}
-            <button type="submit" className="button button-primary full-width">Sign in</button>
+            <button type="submit" className="button button-primary full-width" disabled={loading}>
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
           </form>
 
           <div className="demo-accounts">
             <strong>Demo accounts</strong>
             {DEMO_USERS.map((user) => (
-              <button type="button" key={user.id} className="demo-account" onClick={() => useDemo(user)}>
+              <button type="button" key={user.email} className="demo-account" onClick={() => useDemo(user)}>
                 <span>{user.roleLabel}</span>
                 <small>{user.email}</small>
                 <small>{user.accessCode}</small>
@@ -106,7 +113,7 @@ export default function Login() {
           </div>
 
           <div className="login-footnote">
-            Frontend prototype only. Production authorization must be enforced by a backend.
+            Backend-authenticated with bcrypt password hashing and JWT token generation.
           </div>
         </div>
       </main>

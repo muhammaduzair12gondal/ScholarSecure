@@ -1,16 +1,16 @@
 import { CheckCircle2, FilePlus2, ShieldCheck, Upload } from 'lucide-react';
 import { useState } from 'react';
 import Topbar from '../components/Topbar';
-import { createApplication, getCurrentUser, SCHOLARSHIP_OPTIONS } from '../auth';
+import { createApplicationAPI, getStoredUser, SCHOLARSHIP_OPTIONS } from '../api';
 
 const initialForm = { scholarship: '', studyLevel: '', cgpa: '', statement: '' };
 
 export default function SubmitApplication() {
-  const user = getCurrentUser();
+  const user = getStoredUser();
   const [form, setForm] = useState(initialForm);
   const [feedback, setFeedback] = useState(null);
   const [submitted, setSubmitted] = useState(null);
-  // Activity 5: selected files stay in component memory and are not saved in browser storage.
+  const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileError, setFileError] = useState('');
 
@@ -20,13 +20,20 @@ export default function SubmitApplication() {
     setFeedback(null);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    const result = createApplication(form);
-    setFeedback({ ok: result.ok, message: result.message });
-    if (result.ok) {
+    setLoading(true);
+    setFeedback(null);
+
+    try {
+      const result = await createApplicationAPI(form);
+      setFeedback({ ok: true, message: result.message });
       setSubmitted(result.application);
       setForm(initialForm);
+    } catch (err) {
+      setFeedback({ ok: false, message: err.message || 'Submission failed.' });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -36,18 +43,15 @@ export default function SubmitApplication() {
     setSelectedFile(null);
     if (!file) return;
 
-    // Activity 5: allow only common scholarship-document formats and limit size to 5 MB.
     const allowedExtensions = ['pdf', 'doc', 'docx'];
     const extension = file.name.split('.').pop()?.toLowerCase();
     const maximumSize = 5 * 1024 * 1024;
     if (!allowedExtensions.includes(extension)) {
-      // Reject unsupported file types before they can be used by the interface.
       setFileError('Only PDF, DOC or DOCX files are allowed.');
       event.target.value = '';
       return;
     }
     if (file.size > maximumSize) {
-      // Client-side size checking gives immediate feedback; a backend must validate again.
       setFileError('The supporting document must be 5 MB or smaller.');
       event.target.value = '';
       return;
@@ -61,9 +65,9 @@ export default function SubmitApplication() {
       <main className="dashboard-main container-wide module-page">
         <section className="dashboard-intro">
           <div>
-            <span className="eyebrow">Activity 3 · Member 1 module</span>
+            <span className="eyebrow">Scholarship application</span>
             <h1>Submit scholarship application</h1>
-            <p>Complete the required fields and submit a new scholarship application for local review.</p>
+            <p>Complete the required fields and submit a new scholarship application for review.</p>
           </div>
           <div className="secure-status"><ShieldCheck size={18} /> Student-only action</div>
         </section>
@@ -110,7 +114,9 @@ export default function SubmitApplication() {
             {fileError && <div className="module-feedback error" role="alert">{fileError}</div>}
 
             {feedback && <div className={feedback.ok ? 'module-feedback success' : 'module-feedback error'} role="alert">{feedback.ok && <CheckCircle2 size={17} />}{feedback.message}</div>}
-            <button className="button button-primary" type="submit">Submit application</button>
+            <button className="button button-primary" type="submit" disabled={loading}>
+              {loading ? 'Submitting…' : 'Submit application'}
+            </button>
           </form>
 
           <aside className="module-card module-summary">
@@ -118,16 +124,16 @@ export default function SubmitApplication() {
             <h2>{submitted ? 'Application created' : `Applicant: ${user?.name}`}</h2>
             {submitted ? (
               <div className="submitted-record">
-                <div><span>Reference</span><strong>{submitted.id}</strong></div>
+                <div><span>Reference</span><strong>{submitted.appId}</strong></div>
                 <div><span>Scholarship</span><strong>{submitted.scholarship}</strong></div>
                 <div><span>Status</span><strong>{submitted.status}</strong></div>
-                <div><span>Submitted</span><strong>{submitted.submitted}</strong></div>
-                <p>The record is now available in the Track Applications module.</p>
+                <div><span>Study Level</span><strong>{submitted.studyLevel}</strong></div>
+                <p>The record is now saved in the database and visible in the Track Applications module.</p>
               </div>
             ) : (
               <div className="security-note">
                 <ShieldCheck size={21} />
-                <div><strong>Frontend validation enabled</strong><p>Required fields, allowed scholarship values, CGPA range and statement length are checked before local data is accepted.</p></div>
+                <div><strong>Backend validation enabled</strong><p>All fields are validated on the server. The JWT token is verified before the application is accepted.</p></div>
               </div>
             )}
           </aside>

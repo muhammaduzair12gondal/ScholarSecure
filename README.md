@@ -63,6 +63,49 @@ npm run preview
 
 `vercel.json` rewrites client-side routes through `index.html` so `/dashboard` and `/officer` can be opened directly.
 
-## Important prototype note
+## Activity 6: Backend & Database Integration
 
-This activity is frontend-only. The browser-side demo credentials, storage and role checks illustrate role-based behavior but are not production authentication. Real authentication, authorization, database access, password hashing, audit logging, secure uploads and verification rules must be enforced by a backend in later SSD stages.
+As part of **Development Activity 6 (Secure Software Development)**, ScholarSecure has transitioned from a frontend prototype into a full-stack, secure web application powered by an Express.js backend and MongoDB database.
+
+### Group Members & Modules
+- **Muhammad Uzair (23F-3032) — Member 1:** Scholarship Application Submission Module (`POST /api/applications`, server-side validation, sequential ID generation, database storage).
+- **Ikram Ali (23F-3064) — Member 2:** Application Tracking & Officer Decision Management Module (`GET /api/applications` with role-based filtering, `PATCH /api/applications/:appId/status` with officer authorization).
+
+### Security Architecture
+1. **Password Hashing:** Passwords hashed with `bcrypt` (12 salt rounds) via pre-save hooks. No plaintext credentials stored.
+2. **JWT Authentication:** Cryptographically signed JSON Web Tokens (`HS256`) issued upon valid credential verification.
+3. **Role-Based Access Control (RBAC):** Backend enforces strict role restrictions:
+   - Students can only submit applications and view their own submitted records.
+   - Officers can view the entire queue and record decisions (`Approve`/`Reject`).
+   - Unauthorized attempts return `401 Unauthorized` or `403 Forbidden`.
+4. **Input Validation & Sanitization:** Enforced server-side with `express-validator` and HTML-tag stripping.
+5. **Rate Limiting & Headers:** Protected by `express-rate-limit` and `helmet`.
+
+### How to Run Locally
+
+#### 1. Backend Server
+```bash
+cd server
+npm install
+npm run seed       # Seed initial users (with bcrypt hashes) and sample applications
+npm start          # Starts server on http://localhost:5000
+```
+
+#### 2. Frontend Client
+```bash
+# In the project root
+npm install
+npm run dev        # Starts Vite dev server on http://localhost:5173
+```
+
+#### 3. Run Backend Verification Test Suite
+```bash
+npm run test:backend
+# or
+bash server/test_api.sh
+```
+
+### Database Backup & Restore
+- Seed script: `server/seed.js`
+- JSON backups: `server/db_backup/users.json` and `server/db_backup/applications.json`
+- Restore script: `node server/restore_db.js` (or `npm run restore` in `server/`)

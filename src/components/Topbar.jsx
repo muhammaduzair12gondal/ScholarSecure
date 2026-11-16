@@ -1,14 +1,14 @@
 import { LogOut } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Brand from './Brand';
-import { clearSession, getCurrentUser } from '../auth';
+import { logoutAPI, getStoredUser } from '../api';
 
 export default function Topbar() {
   const navigate = useNavigate();
-  const user = getCurrentUser();
+  const user = getStoredUser();
 
   function logout() {
-    clearSession();
+    logoutAPI();
     navigate('/login', { replace: true });
   }
 
