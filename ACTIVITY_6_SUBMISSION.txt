@@ -1,0 +1,115 @@
+==============================================================================
+Secure Software Development — Development Activity 6 Submission
+Title: Backend Development and Integration of Existing Semester Project
+==============================================================================
+
+Project Name: ScholarSecure — Secure Scholarship Application, Tracking & Verification Portal
+GitHub Repository URL: https://github.com/muhammaduzair12gondal/ScholarSecure.git
+Branch: main (Latest Commit: 21f9940)
+
+Group Members:
+1. Muhammad Uzair — 23F-3032
+2. Ikram Ali       — 23F-3064
+
+------------------------------------------------------------------------------
+1. Individual Module Allocation
+------------------------------------------------------------------------------
+Member 1: Muhammad Uzair (23F-3032)
+- Module: Scholarship Application Submission Module
+- Backend Endpoints: POST /api/applications
+- Responsibilities:
+  • Server-side input validation (allowed scholarships, study level, CGPA 0.00-4.00, statement 20-500 chars)
+  • HTML tag stripping/sanitization
+  • Auto-generation of sequential reference IDs (APP-1001, APP-1002, ...)
+  • Database persistence in MongoDB Atlas
+  • Frontend integration with SubmitApplication.jsx
+
+Member 2: Ikram Ali (23F-3064)
+- Module: Application Tracking & Officer Decision Management Module
+- Backend Endpoints: GET /api/applications, PATCH /api/applications/:appId/status
+- Responsibilities:
+  • Role-aware database queries (students only see their own applications; officers see full queue)
+  • Role-Based Access Control (RBAC): Only officers can approve/reject; students receive 403 Forbidden
+  • PII protection: Phone and CNIC masking on student view
+  • Frontend integration with TrackApplications.jsx and OfficerDashboard.jsx
+
+------------------------------------------------------------------------------
+2. Database Details & Setup / Backup Scripts
+------------------------------------------------------------------------------
+- Database: MongoDB Atlas (Cloud Cluster: m0.6qjoidt.mongodb.net, DB: scholarsecure)
+- Password Security: Passwords stored strictly as bcrypt hashes (12 salt rounds), never in plaintext
+- Seed Script: server/seed.js (npm run seed)
+- Database Restore Script: server/restore_db.js (npm run restore)
+- JSON Backup Files:
+  • server/db_backup/users.json
+  • server/db_backup/applications.json
+
+------------------------------------------------------------------------------
+3. Implemented Backend Routes / API Endpoints
+------------------------------------------------------------------------------
+1. POST /api/auth/login
+   - Public endpoint
+   - Verifies credentials against bcrypt hash, issues signed JWT token (2h expiry)
+   - Generic error messages to prevent user enumeration
+
+2. GET /api/auth/me
+   - Protected endpoint (Requires Bearer JWT)
+   - Returns authenticated user details from token
+
+3. POST /api/applications
+   - Protected endpoint (Student role only)
+   - Validates input, saves new scholarship application, returns sequential ID
+
+4. GET /api/applications
+   - Protected endpoint (Student & Officer)
+   - Role-aware filtering: Student receives only their own records; Officer receives entire queue
+
+5. PATCH /api/applications/:appId/status
+   - Protected endpoint (Officer role only)
+   - Updates status (Approved / Rejected); student attempts are blocked with HTTP 403 Forbidden
+
+6. GET /api/health
+   - Public health check confirming server and database availability
+
+------------------------------------------------------------------------------
+4. Evidence of Authentication & Authorization Testing
+------------------------------------------------------------------------------
+Automated test suite (server/test_api.sh) executed against live MongoDB Atlas:
+
+  [PASS] Server responds with healthy status
+  [PASS] Student login succeeds with valid credentials
+  [PASS] Signed JWT token issued
+  [PASS] Officer login succeeds with valid credentials
+  [PASS] Signed JWT token issued
+  [PASS] Rejects invalid credentials with 401 Unauthorized
+  [PASS] Rejects unauthenticated request with 401 Unauthorized
+  [PASS] Rejects invalid or modified JWT with 401 Unauthorized
+  [PASS] Application submission succeeds for student
+  [PASS] Sequential application ID generated
+  [PASS] Rejects invalid CGPA (> 4.00) with 400 Bad Request
+  [PASS] Rejects statement < 20 characters with 400 Bad Request
+  [PASS] Student cannot view other students records outside ownership
+  [PASS] Student blocked from officer status update with 403 Forbidden
+  [PASS] Officer successfully updates application status
+  [PASS] Application status updated to Approved in database
+
+Result: ALL 16 TESTS PASSED SUCCESSFULLY.
+
+------------------------------------------------------------------------------
+5. How to Run
+------------------------------------------------------------------------------
+1. Backend:
+   cd server
+   npm install
+   npm start          # Runs on http://localhost:5000
+
+2. Frontend:
+   npm install
+   npm run dev        # Runs on http://localhost:5173
+
+3. Run Tests:
+   npm run test:backend
+
+Demo Accounts:
+- Student: student@scholarsecure.demo / Student123!
+- Officer: officer@scholarsecure.demo / Officer123!
