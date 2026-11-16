@@ -1,24 +1,24 @@
 [
   {
-    "_id": "6afab504fb7721676519e56f",
+    "_id": "6afab74f844c6e40c50ac9ff",
     "name": "Muhammad Uzair",
     "email": "student@scholarsecure.demo",
-    "password": "$2b$12$2Hhhy98PHSLGrptCFo1KC.97sD.o.T/PPV6daeO/.VHpBYYFjyewe",
+    "password": "$2b$12$MTVpazSTD5/WGTj71WyoKuov4vZKEFpOdhrgGOz39InnJwkNru6vO",
     "role": "student",
     "roleLabel": "Student",
-    "createdAt": "2026-11-16T07:47:16.061Z",
-    "updatedAt": "2026-11-16T07:47:16.061Z",
+    "createdAt": "2026-11-16T07:57:03.970Z",
+    "updatedAt": "2026-11-16T07:57:03.970Z",
     "__v": 0
   },
   {
-    "_id": "6afab504fb7721676519e573",
+    "_id": "6afab750844c6e40c50aca01",
     "name": "Sara Ahmed",
     "email": "officer@scholarsecure.demo",
-    "password": "$2b$12$iR0jQr7YT/lhA4xYjJprvuIAnRL0n64plHe07e9sJHcxvXr8W.mZq",
+    "password": "$2b$12$TWkdq3LGTxqwjCE/fcsT/u0hJoLnbaYWPeGWittGKk9ymNcwyaevC",
     "role": "officer",
     "roleLabel": "Scholarship Officer",
-    "createdAt": "2026-11-16T07:47:16.354Z",
-    "updatedAt": "2026-11-16T07:47:16.354Z",
+    "createdAt": "2026-11-16T07:57:04.366Z",
+    "updatedAt": "2026-11-16T07:57:04.366Z",
     "__v": 0
   }
 ]

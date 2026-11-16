@@ -1,26 +1,26 @@
 [
   {
-    "_id": "6afab504fb7721676519e575",
+    "_id": "6afab750844c6e40c50aca03",
     "appId": "APP-1001",
-    "studentId": "6afab504fb7721676519e56f",
+    "studentId": "6afab74f844c6e40c50ac9ff",
     "studentName": "Muhammad Uzair",
     "scholarship": "HEC Need-Based Scholarship",
     "studyLevel": "Undergraduate",
     "cgpa": "2.35",
     "statement": "Need-based application submitted for review.",
-    "status": "Approved",
+    "status": "Under review",
     "documentStatus": "4 of 5 verified",
     "phone": "0300-000-0001",
     "cnic": "DEMO-CNIC-001",
     "internalNote": "Income evidence requires final cross-check before a decision.",
     "__v": 0,
-    "createdAt": "2026-11-16T07:47:16.646Z",
-    "updatedAt": "2026-11-16T07:47:50.375Z"
+    "createdAt": "2026-11-16T07:57:04.770Z",
+    "updatedAt": "2026-11-16T07:57:04.770Z"
   },
   {
-    "_id": "6afab504fb7721676519e576",
+    "_id": "6afab750844c6e40c50aca04",
     "appId": "APP-1002",
-    "studentId": "6afab504fb7721676519e56f",
+    "studentId": "6afab74f844c6e40c50ac9ff",
     "studentName": "Areeba Khan",
     "scholarship": "Punjab Educational Endowment Fund",
     "studyLevel": "Undergraduate",
@@ -32,13 +32,13 @@
     "cnic": "DEMO-CNIC-002",
     "internalNote": "Eligibility evidence is complete. Review academic threshold.",
     "__v": 0,
-    "createdAt": "2026-11-16T07:47:16.646Z",
-    "updatedAt": "2026-11-16T07:47:16.646Z"
+    "createdAt": "2026-11-16T07:57:04.771Z",
+    "updatedAt": "2026-11-16T07:57:04.771Z"
   },
   {
-    "_id": "6afab504fb7721676519e577",
+    "_id": "6afab750844c6e40c50aca05",
     "appId": "APP-1003",
-    "studentId": "6afab504fb7721676519e56f",
+    "studentId": "6afab74f844c6e40c50ac9ff",
     "studentName": "Hamza Ali",
     "scholarship": "Digital Skills Access Scholarship",
     "studyLevel": "Undergraduate",
@@ -50,25 +50,25 @@
     "cnic": "DEMO-CNIC-003",
     "internalNote": "Domicile verification is still pending.",
     "__v": 0,
-    "createdAt": "2026-11-16T07:47:16.646Z",
-    "updatedAt": "2026-11-16T07:47:16.646Z"
+    "createdAt": "2026-11-16T07:57:04.771Z",
+    "updatedAt": "2026-11-16T07:57:04.771Z"
   },
   {
-    "_id": "6afab56b19a016451d98ab8c",
+    "_id": "6afab772e63b8287ee0f14a7",
     "appId": "APP-1004",
-    "studentId": "6afab504fb7721676519e56f",
+    "studentId": "6afab74f844c6e40c50ac9ff",
     "studentName": "Muhammad Uzair",
-    "scholarship": "University Merit Support Grant",
-    "studyLevel": "Graduate",
-    "cgpa": "3.75",
-    "statement": "I am applying for this scholarship because I have demonstrated strong academic performance and wish to continue my education.",
-    "status": "Submitted",
+    "scholarship": "Digital Skills Access Scholarship",
+    "studyLevel": "Undergraduate",
+    "cgpa": "3.85",
+    "statement": "I have completed several programming certifications and need assistance for university tuition fees.",
+    "status": "Approved",
     "documentStatus": "Awaiting verification",
     "phone": "Not provided",
     "cnic": "Not provided",
     "internalNote": "New application awaiting officer verification.",
-    "createdAt": "2026-11-16T07:48:59.971Z",
-    "updatedAt": "2026-11-16T07:48:59.971Z",
+    "createdAt": "2026-11-16T07:57:38.341Z",
+    "updatedAt": "2026-11-16T07:57:38.835Z",
     "__v": 0
   }
 ]

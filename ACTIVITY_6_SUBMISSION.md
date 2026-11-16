@@ -19,7 +19,7 @@
 ## 2. Architecture & Technology Stack
 
 - **Backend Framework:** Node.js with Express.js (ES Modules)
-- **Database:** MongoDB with Mongoose ODM (parameterized queries, schematized validation)
+- **Database:** MongoDB Atlas (Cloud Cluster `m0.6qjoidt.mongodb.net`, database `scholarsecure`) with Mongoose ODM (parameterized queries, schematized validation)
 - **Authentication:** JSON Web Tokens (`jsonwebtoken`) signed with HMAC-SHA256, 2-hour validity
 - **Password Security:** `bcrypt` with adaptive cost factor (salt rounds = 12), pre-save hashing
 - **Authorization:** Custom role-based middleware (`authenticate`, `authorize('officer')`, `authorize('student')`)
